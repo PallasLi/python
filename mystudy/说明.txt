@@ -1,0 +1,14 @@
+
+cd mystudy
+
+创建setup.py
+py2applet --make-setup mystudy.py
+
+清理
+rm -rf build dist
+
+生成应用
+python3 setup.py py2app
+
+
+
