@@ -13,7 +13,10 @@ while True:
     rc.hset('Name:' + UserName,'Password',Pwd)
 f.close()
 alluser = rc.keys('*')
-#print alluser
+print (alluser)
 print ("===================================读出存进去的数据===================================")
 for user in alluser:
-    print (' # '.join((user.split(':')[1],rc.hget(user,'Password'),rc.hget(user,'Email'))))
+    print(user)
+    print(user.split(b':'))
+    print (user.split(b':')[1],rc.hget(user,'Password'),rc.hget(user,'Email'))
+#     print (' # '.join((user.split(b':')[1],rc.hget(user,'Password'),rc.hget(user,'Email'))))

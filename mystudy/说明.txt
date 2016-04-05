@@ -12,3 +12,12 @@ python3 setup.py py2app
 
 
 
+数据保存路径iCloud Driver的文本编辑目录中
+
+/Users/lyt1987/Library/Mobile\ Documents/com~apple~TextEdit/Documents/study
+
+启动memcache
+./memcached -p 11211 -m 64 -u root -vv
+
+启动redis
+./redis-server

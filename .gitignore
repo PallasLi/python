@@ -1,14 +1,13 @@
 
-pythonStudy/.project
-
-pythonStudy/.pydevproject
-
 *.pyc
 
-djangoTest/.project
 
-djangoTest/.pydevproject
+*/.project
 
-mystudy/.project
+*/.pydevproject
 
-mystudy/.pydevproject
+*/dist/*
+
+*/build/*
+
+*/.settings/*
