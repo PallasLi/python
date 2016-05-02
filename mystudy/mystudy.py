@@ -1,9 +1,9 @@
+#coding=utf-8
 '''
 Created on 2016年3月24日
-
-@author: lyt
+@author:lyt
 '''
-import tkinter  
+import tkinter2  
 from com.pallasli.menu.menuHandler import createMenuBar
 
   
@@ -30,9 +30,6 @@ def main():
     createMenuBar(root,main_frame)
     main_frame.mainloop()
     
-      
-  
-  
 if __name__ == "__main__":  
     main()  
     pass  
