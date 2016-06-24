@@ -1,0 +1,777 @@
+*args 的用法
+
+*args 和 **kwargs 主要用于函数定义。 你可以将不定数量的参数传递给一个函数。
+
+这里的不定的意思是：预先并不知道, 函数使用者会传递多少个参数给你, 所以在这个场景下使用这两个关键字。 *args 是用来发送一个非键值对的可变数量的参数列表给一个函数.
+
+这里有个例子帮你理解这个概念:
+
+def test_var_args(f_arg, *argv):
+    print("first normal arg:", f_arg)
+    for arg in argv:
+        print("another arg through *argv:", arg)
+
+test_var_args('yasoob', 'python', 'eggs', 'test')
+这会产生如下输出:
+
+first normal arg: yasoob
+another arg through *argv: python
+another arg through *argv: eggs
+another arg through *argv: test
+我希望这解决了你所有的困惑. 那接下来让我们谈谈 **kwargs
+
+
+
+**kwargs 的用法
+
+**kwargs 允许你将不定长度的键值对, 作为参数传递给一个函数。 如果你想要在一个函数里处理带名字的参数, 你应该使用**kwargs。
+
+这里有个让你上手的例子:
+
+def greet_me(**kwargs):
+    for key, value in kwargs.items():
+        print("{0} == {1}".format(key, value))
+
+>>> greet_me(name="yasoob")
+name == yasoob
+现在你可以看出我们怎样在一个函数里, 处理了一个键值对参数了。
+
+这就是**kwargs的基础, 而且你可以看出它有多么管用。 接下来让我们谈谈，你怎样使用*args 和 **kwargs来调用一个参数为列表或者字典的函数。
+
+
+
+
+使用 *args 和 **kwargs 来调用函数
+
+那现在我们将看到怎样使用*args和**kwargs 来调用一个函数。 假设，你有这样一个小函数：
+
+def test_args_kwargs(arg1, arg2, arg3):
+    print("arg1:", arg1)
+    print("arg2:", arg2)
+    print("arg3:", arg3)
+你可以使用*args或**kwargs来给这个小函数传递参数。 下面是怎样做：
+
+# 首先使用 *args
+>>> args = ("two", 3, 5)
+>>> test_args_kwargs(*args)
+arg1: two
+arg2: 3
+arg3: 5
+
+# 现在使用 **kwargs:
+>>> kwargs = {"arg3": 3, "arg2": "two", "arg1": 5}
+>>> test_args_kwargs(**kwargs)
+arg1: 5
+arg2: two
+arg3: 3
+标准参数与*args、**kwargs在使用时的顺序
+
+那么如果你想在函数里同时使用所有这三种参数， 顺序是这样的：
+
+some_func(fargs, *args, **kwargs)
+
+
+
+什么时候使用它们？
+
+这还真的要看你的需求而定。
+
+最常见的用例是在写函数装饰器的时候（会在另一章里讨论）。
+
+此外它也可以用来做猴子补丁(monkey patching)。猴子补丁的意思是在程序运行时(runtime)修改某些代码。 打个比方，你有一个类，里面有个叫get_info的函数会调用一个API并返回相应的数据。如果我们想测试它，可以把API调用替换成一些测试数据。例如：
+
+import someclass
+
+def get_info(self, *args):
+    return "Test data"
+
+someclass.get_info = get_info
+我敢肯定你也可以想象到一些其他的用例。
+
+
+
+
+
+
+
+
+
+
+
+
+
+调试（Debugging）
+
+利用好调试，能大大提高你捕捉代码Bug的。大部分新人忽略了Python debugger(pdb)的重要性。 在这个章节我只会告诉你一些重要的命令，你可以从官方文档中学习到更多。
+
+译者注，参考：https://docs.python.org/2/library/pdb.html Or https://docs.python.org/3/library/pdb.html
+从命令行运行
+
+你可以在命令行使用Python debugger运行一个脚本， 举个例子：
+
+$ python -m pdb my_script.py
+这会触发debugger在脚本第一行指令处停止执行。这在脚本很短时会很有帮助。你可以通过(Pdb)模式接着查看变量信息，并且逐行调试。
+
+从脚本内部运行
+
+同时，你也可以在脚本内部设置断点，这样就可以在某些特定点查看变量信息和各种执行时信息了。这里将使用pdb.set_trace()方法来实现。举个例子：
+
+import pdb
+
+def make_bread():
+    pdb.set_trace()
+    return "I don't have time"
+
+print(make_bread())
+试下保存上面的脚本后运行之。你会在运行时马上进入debugger模式。现在是时候了解下debugger模式下的一些命令了。
+
+命令列表：
+
+c: 继续执行
+w: 显示当前正在执行的代码行的上下文信息
+a: 打印当前函数的参数列表
+s: 执行当前代码行，并停在第一个能停的地方（相当于单步进入）
+n: 继续执行到当前函数的下一行，或者当前行直接返回（单步跳过）
+单步跳过（next）和单步进入（step）的区别在于， 单步进入会进入当前行调用的函数内部并停在里面， 而单步跳过会（几乎）全速执行完当前行调用的函数，并停在当前函数的下一行。
+
+pdb真的是一个很方便的功能，上面仅列举少量用法，更多的命令强烈推荐你去看官方文档。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+set(集合)数据结构
+
+set(集合)是一个非常有用的数据结构。它与列表(list)的行为类似，区别在于set不能包含重复的值。
+这在很多情况下非常有用。例如你可能想检查列表中是否包含重复的元素，你有两个选择，第一个需要使用for循环，就像这样：
+
+some_list = ['a', 'b', 'c', 'b', 'd', 'm', 'n', 'n']
+
+duplicates = []
+for value in some_list:
+    if some_list.count(value) > 1:
+        if value not in duplicates:
+            duplicates.append(value)
+
+print(duplicates)
+### 输出: ['b', 'n']
+但还有一种更简单更优雅的解决方案，那就是使用集合(sets)，你直接这样做：
+
+some_list = ['a', 'b', 'c', 'b', 'd', 'm', 'n', 'n']
+duplicates = set([x for x in some_list if some_list.count(x) > 1])
+print(duplicates)
+### 输出: set(['b', 'n'])
+集合还有一些其它方法，下面我们介绍其中一部分。
+
+交集
+你可以对比两个集合的交集（两个集合中都有的数据），如下：
+
+valid = set(['yellow', 'red', 'blue', 'green', 'black'])
+input_set = set(['red', 'brown'])
+print(input_set.intersection(valid))
+### 输出: set(['red'])
+差集
+你可以用差集(difference)找出无效的数据，相当于用一个集合减去另一个集合的数据，例如：
+
+valid = set(['yellow', 'red', 'blue', 'green', 'black'])
+input_set = set(['red', 'brown'])
+print(input_set.difference(valid))
+### 输出: set(['brown'])
+你也可以用符号来创建集合，如：
+
+a_set = {'red', 'blue', 'green'}
+print(type(a_set))
+### 输出: <type 'set'>
+集合还有一些其它方法，我会建议访问官方文档并做个快速阅读。
+
+
+
+
+
+
+
+
+
+
+对象变动(Mutation)
+
+Python中可变(mutable)与不可变(immutable)的数据类型让新手很是头痛。简单的说，可变(mutable)意味着"可以被改动"，而不可变(immutable)的意思是“常量(constant)”。想把脑筋转动起来吗？考虑下这个例子：
+
+foo = ['hi']
+print(foo)
+# Output: ['hi']
+
+bar = foo
+bar += ['bye']
+print(foo)
+# Output: ['hi', 'bye']
+刚刚发生了什么？我们预期的不是那样！我们期望看到是这样的：
+
+foo = ['hi']
+print(foo)
+# Output: ['hi']
+
+bar = foo
+bar += ['bye']
+
+print(foo)
+# Output: ['hi']
+
+print(bar)
+# Output: ['hi', 'bye']
+这不是一个bug。这是对象可变性(mutability)在作怪。每当你将一个变量赋值为另一个可变类型的变量时，对这个数据的任意改动会同时反映到这两个变量上去。新变量只不过是老变量的一个别名而已。这个情况只是针对可变数据类型。下面的函数和可变数据类型让你一下就明白了：
+
+def add_to(num, target=[]):
+    target.append(num)
+    return target
+
+add_to(1)
+# Output: [1]
+
+add_to(2)
+# Output: [1, 2]
+
+add_to(3)
+# Output: [1, 2, 3]
+你可能预期它表现的不是这样子。你可能希望，当你调用add_to时，有一个新的列表被创建，就像这样：
+
+def add_to(num, target=[]):
+    target.append(num)
+    return target
+
+add_to(1)
+# Output: [1]
+
+add_to(2)
+# Output: [2]
+
+add_to(3)
+# Output: [3]
+啊哈！这次又没有达到预期，是列表的可变性在作怪。在Python中当函数被定义时，默认参数只会运算一次，而不是每次被调用时都会重新运算。你应该永远不要定义可变类型的默认参数，除非你知道你正在做什么。你应该像这样做：
+
+def add_to(element, target=None):
+    if target is None:
+        target = []
+    target.append(element)
+    return target
+现在每当你在调用这个函数不传入target参数的时候，一个新的列表会被创建。举个例子：
+
+add_to(42)
+# Output: [42]
+
+add_to(42)
+# Output: [42]
+
+add_to(42)
+# Output: [42]
+
+
+
+
+
+
+
+
+
+
+
+
+
+__slots__魔法
+
+在Python中，每个类都有实例属性。默认情况下Python用一个字典来保存一个对象的实例属性。这非常有用，因为它允许我们在运行时去设置任意的新属性。
+
+然而，对于有着已知属性的小类来说，它可能是个瓶颈。这个字典浪费了很多内存。Python不能在对象创建时直接分配一个固定量的内存来保存所有的属性。因此如果你创建许多对象（我指的是成千上万个），它会消耗掉很多内存。
+不过还是有一个方法来规避这个问题。这个方法需要使用__slots__来告诉Python不要使用字典，而且只给一个固定集合的属性分配空间。
+
+这里是一个使用与不使用__slots__的例子：
+
+不使用 __slots__:
+
+class MyClass(object):
+  def __init__(self, name, identifier):
+      self.name = name
+      self.identifier = identifier
+      self.set_up()
+  # ...
+使用 __slots__:
+class MyClass(object):
+  __slots__ = ['name', 'identifier']
+  def __init__(self, name, identifier):
+      self.name = name
+      self.identifier = identifier
+      self.set_up()
+  # ...
+第二段代码会为你的内存减轻负担。通过这个技巧，有些人已经看到内存占用率几乎40%~50%的减少。
+
+稍微备注一下，你也许需要试一下PyPy。它已经默认地做了所有这些优化。
+
+以下你可以看到一个例子，它用IPython来展示在有与没有__slots__情况下的精确内存占用，感谢 https://github.com/ianozsvald/ipython_memory_usage
+
+Python 3.4.3 (default, Jun  6 2015, 13:32:34)
+Type "copyright", "credits" or "license" for more information.
+
+IPython 4.0.0 -- An enhanced Interactive Python.
+?         -> Introduction and overview of IPython's features.
+%quickref -> Quick reference.
+help      -> Python's own help system.
+object?   -> Details about 'object', use 'object??' for extra details.
+
+In [1]: import ipython_memory_usage.ipython_memory_usage as imu
+
+In [2]: imu.start_watching_memory()
+In [2] used 0.0000 MiB RAM in 5.31s, peaked 0.00 MiB above current, total RAM usage 15.57 MiB
+
+In [3]: %cat slots.py
+class MyClass(object):
+        __slots__ = ['name', 'identifier']
+        def __init__(self, name, identifier):
+                self.name = name
+                self.identifier = identifier
+
+num = 1024*256
+x = [MyClass(1,1) for i in range(num)]
+In [3] used 0.2305 MiB RAM in 0.12s, peaked 0.00 MiB above current, total RAM usage 15.80 MiB
+
+In [4]: from slots import *
+In [4] used 9.3008 MiB RAM in 0.72s, peaked 0.00 MiB above current, total RAM usage 25.10 MiB
+
+In [5]: %cat noslots.py
+class MyClass(object):
+        def __init__(self, name, identifier):
+                self.name = name
+                self.identifier = identifier
+
+num = 1024*256
+x = [MyClass(1,1) for i in range(num)]
+In [5] used 0.1758 MiB RAM in 0.12s, peaked 0.00 MiB above current, total RAM usage 25.28 MiB
+
+In [6]: from noslots import *
+In [6] used 22.6680 MiB RAM in 0.80s, peaked 0.00 MiB above current, total RAM usage 47.95 MiB
+
+
+
+
+
+
+
+
+
+
+生成器(Generators)
+
+生成器也是一种迭代器，但是你只能对其迭代一次。这是因为它们并没有把所有的值存在内存中，而是在运行时生成值。你通过遍历来使用它们，要么用一个“for”循环，要么将它们传递给任意可以进行迭代的函数和结构。大多数时候生成器是以函数来实现的。然而，它们并不返回一个值，而是yield(暂且译作“生出”)一个值。这里有个生成器函数的简单例子：
+
+def generator_function():
+    for i in range(10):
+        yield i
+
+for item in generator_function():
+    print(item)
+
+# Output: 0
+# 1
+# 2
+# 3
+# 4
+# 5
+# 6
+# 7
+# 8
+# 9
+这个案例并不是非常实用。生成器最佳应用场景是：你不想同一时间将所有计算出来的大量结果集分配到内存当中，特别是结果集里还包含循环。
+
+译者注：这样做会消耗大量资源
+许多Python 2里的标准库函数都会返回列表，而Python 3都修改成了返回生成器，因为生成器占用更少的资源。
+
+下面是一个计算斐波那契数列的生成器：
+
+# generator version
+def fibon(n):
+    a = b = 1
+    for i in range(n):
+        yield a
+        a, b = b, a + b
+Now we can use it like this:
+
+for x in fibon(1000000):
+    print(x)
+用这种方式，我们可以不用担心它会使用大量资源。然而，之前如果我们这样来实现的话：
+
+def fibon(n):
+    a = b = 1
+    result = []
+    for i in range(n):
+        result.append(a)
+        a, b = b, a + b
+    return result
+这也许会在计算很大的输入参数时，用尽所有的资源。我们已经讨论过生成器使用一次迭代，但我们并没有测试过。在测试前你需要再知道一个Python内置函数：next()。它允许我们获取一个序列的下一个元素。那我们来验证下我们的理解：
+
+def generator_function():
+    for i in range(3):
+        yield i
+
+gen = generator_function()
+print(next(gen))
+# Output: 0
+print(next(gen))
+# Output: 1
+print(next(gen))
+# Output: 2
+print(next(gen))
+# Output: Traceback (most recent call last):
+#            File "<stdin>", line 1, in <module>
+#         StopIteration
+我们可以看到，在yield掉所有的值后，next()触发了一个StopIteration的异常。基本上这个异常告诉我们，所有的值都已经被yield完了。你也许会奇怪，为什么我们在使用for循环时没有这个异常呢？啊哈，答案很简单。for循环会自动捕捉到这个异常并停止调用next()。你知不知道Python中一些内置数据类型也支持迭代哦？我们这就去看看：
+
+my_string = "Yasoob"
+next(my_string)
+# Output: Traceback (most recent call last):
+#      File "<stdin>", line 1, in <module>
+#    TypeError: str object is not an iterator
+好吧，这不是我们预期的。这个异常说那个str对象不是一个迭代器。对，就是这样！它是一个可迭代对象，而不是一个迭代器。这意味着它支持迭代，但我们不能直接对其进行迭代操作。那我们怎样才能对它实施迭代呢？是时候学习下另一个内置函数，iter。它将根据一个可迭代对象返回一个迭代器对象。这里是我们如何使用它：
+
+my_string = "Yasoob"
+my_iter = iter(my_string)
+next(my_iter)
+# Output: 'Y'
+现在好多啦。我肯定你已经爱上了学习生成器。一定要记住，想要完全掌握这个概念，你只有使用它。确保你按照这个模式，并在生成器对你有意义的任何时候都使用它。你绝对不会失望的！
+
+
+
+
+
+
+
+
+虚拟环境(virtualenv)
+
+你听说过virtualenv吗？
+如果你是一位初学者，你可能没有听说过virtualenv；但如果你是位经验丰富的程序员，那么它可能是你的工具集的重要组织部分。
+
+那么，什么是virtualenv?
+Virtualenv 是一个工具，它能够帮我们创建一个独立(隔离)的Python环境。想象你有一个应用程序，依赖于版本为2的第三方模块，但另一个程序依赖的版本是3，请问你如何使用和开发这些应用程序？
+
+如果你把一切都安装到了/usr/lib/python2.7/site-packages（或者其它平台的标准位置），那很容易出现某个模块被升级而你却不知道的情况。
+
+在另一种情况下，想象你有一个已经开发完成的程序，但是你不想更新它所依赖的第三方模块版本；但你已经开始另一个程序，需要这些第三方模块的版本。
+
+用什么方式解决？
+使用virtualenv！针对每个程序创建独立（隔离）的Python环境，而不是在全局安装所依赖的模块。
+
+要安装它，只需要在命令行中输入以下命令：
+
+$ pip install virtualenv
+最重要的命令是：
+
+$ virtualenv myproject
+$ source bin/activate
+执行第一个命令在myproject文件夹创建一个隔离的virtualenv环境，第二个命令激活这个隔离的环境(virtualenv)。
+
+在创建virtualenv时，你必须做出决定：这个virtualenv是使用系统全局的模块呢？还是只使用这个virtualenv内的模块。 默认情况下，virtualenv不会使用系统全局模块。
+
+如果你想让你的virtualenv使用系统全局模块，请使用--system-site-packages参数创建你的virtualenv，例如：
+
+virtualenv --system-site-packages mycoolproject
+使用以下命令可以退出这个virtualenv:
+
+$ deactivate
+运行之后将恢复使用你系统全局的Python模块。
+
+福利
+
+你可以使用smartcd来帮助你管理你的环境，当你切换目录时，它可以帮助你激活（activate）和退出（deactivate）你的virtualenv。我已经用了很多次，很喜欢它。你可以在github(https://github.com/cxreg/smartcd) 上找到更多关于它的资料。
+
+这只是一个virtualenv的简短介绍，你可以在 http://docs.python-guide.org/en/latest/dev/virtualenvs/ 找到更多信息。
+
+
+
+
+
+
+
+
+
+
+
+
+枚举
+
+枚举(enumerate)是Python内置函数。它的用处很难在简单的一行中说明，但是大多数的新人，甚至一些高级程序员都没有意识到它。
+
+它允许我们遍历数据并自动计数，
+
+下面是一个例子：
+
+for counter, value in enumerate(some_list):
+    print(counter, value)
+不只如此，enumerate也接受一些可选参数，这使它更有用。
+
+my_list = ['apple', 'banana', 'grapes', 'pear']
+for c, value in enumerate(my_list, 1):
+    print(c, value)
+
+# 输出:
+(1, 'apple')
+(2, 'banana')
+(3, 'grapes')
+(4, 'pear')
+上面这个可选参数允许我们定制从哪个数字开始枚举。
+你还可以用来创建包含索引的元组列表， 例如：
+
+my_list = ['apple', 'banana', 'grapes', 'pear']
+counter_list = list(enumerate(my_list, 1))
+print(counter_list)
+# 输出: [(1, 'apple'), (2, 'banana'), (3, 'grapes'), (4, 'pear')]
+
+
+
+
+
+
+
+
+
+
+
+23. 协程
+
+Python中的协程和生成器很相似但又稍有不同。主要区别在于：
+
+生成器是数据的生产者
+协程则是数据的消费者
+首先我们先来回顾下生成器的创建过程。我们可以这样去创建一个生成器:
+
+    def fib():
+        a, b = 0, 1
+        while True:
+            yield a
+            a, b = b, a+b
+然后我们经常在for循环中这样使用它:
+
+    for i in fib():
+        print i
+这样做不仅快而且不会给内存带来压力，因为我们所需要的值都是动态生成的而不是将他们存储在一个列表中。更概括的说如果现在我们在上面的例子中使用yield便可获得了一个协程。协程会消费掉发送给它的值。Python实现的grep就是个很好的例子：
+
+    def grep(pattern):
+        print("Searching for", pattern)
+        while True:
+            line = (yield)
+            if pattern in line:
+                print(line) 
+等等！yield返回了什么？啊哈，我们已经把它变成了一个协程。它将不再包含任何初始值，相反要从外部传值给它。我们可以通过send()方法向它传值。这有个例子：
+
+    search = grep('coroutine')
+    next(search)
+    #output: Searching for coroutine
+    search.send("I love you")
+    search.send("Don't you love me?")
+    search.send("I love coroutine instead!")
+    #output: I love coroutine instead!
+发送的值会被yield接收。我们为什么要运行next()方法呢？这样做正是为了启动一个协程。就像协程中包含的生成器并不是立刻执行，而是通过next()方法来响应send()方法。因此，你必须通过next()方法来执行yield表达式。
+
+我们可以通过调用close()方法来关闭一个协程。像这样：
+
+    search = grep('coroutine')
+    search.close()
+更多协程相关知识的学习大家可以参考David Beazley的这份精彩演讲。
+
+
+
+
+
+
+
+
+open函数
+
+open 函数可以打开一个文件。超级简单吧？大多数时候，我们看到它这样被使用：
+
+f = open('photo.jpg', 'r+')
+jpgdata = f.read()
+f.close()
+我现在写这篇文章的原因，是大部分时间我看到open被这样使用。有三个错误存在于上面的代码中。你能把它们全指出来吗？如不能，请读下去。在这篇文章的结尾，你会知道上面的代码错在哪里，而且，更重要的是，你能在自己的代码里避免这些错误。现在我们从基础开始：
+
+open的返回值是一个文件句柄，从操作系统托付给你的Python程序。一旦你处理完文件，你会想要归还这个文件句柄，只有这样你的程序不会超出一次能打开的文件句柄的数量上限。
+
+显式地调用close关闭了这个文件句柄，但前提是只有在read成功的情况下。如果有任意异常正好在f = open(...)之后产生，f.close()将不会被调用（取决于Python解释器的做法，文件句柄可能还是会被归还，但那是另外的话题了）。为了确保不管异常是否触发，文件都能关闭，我们将其包裹成一个with语句:
+
+with open('photo.jpg', 'r+') as f:
+    jpgdata = f.read()
+open的第一个参数是文件名。第二个(mode 打开模式)决定了这个文件如何被打开。
+
+如果你想读取文件，传入r
+如果你想读取并写入文件，传入r+
+如果你想覆盖写入文件，传入w
+如果你想在文件末尾附加内容，传入a
+虽然有若干个其他的有效的mode字符串，但有可能你将永远不会使用它们。mode很重要，不仅因为它改变了行为，而且它可能导致权限错误。举个例子，我们要是在一个写保护的目录里打开一个jpg文件， open(.., 'r+')就失败了。mode可能包含一个扩展字符；让我们还可以以二进制方式打开文件(你将得到字节串)或者文本模式(字符串)
+
+一般来说，如果文件格式是由人写的，那么它更可能是文本模式。jpg图像文件一般不是人写的（而且其实不是人直接可读的），因此你应该以二进制模式来打开它们，方法是在mode字符串后加一个b(你可以看看开头的例子里，正确的方式应该是rb)。
+如果你以文本模式打开一些东西（比如，加一个t,或者就用r/r+/w/a），你还必须知道要使用哪种编码。对于计算机来说，所有的文件都是字节，而不是字符。
+
+可惜，在Pyhon 2.x版本里，open不支持显示地指定编码。然而，io.open函数在Python 2.x中和3.x(其中它是open的别名)中都有提供，它能做正确的事。你可以传入encoding这个关键字参数来传入编码。
+如果你不传入任意编码，一个系统 - 以及Python -指定的默认选项将被选中。你也许被诱惑去依赖这个默认选项，但这个默认选项经常是错误的，或者默认编码实际上不能表达文件里的所有字符（这将经常发生在Python 2.x和/或Windows）。
+所以去挑选一个编码吧。utf-8是一个非常好的编码。当你写入一个文件，你可以选一个你喜欢的编码（或者最终读你文件的程序所喜欢的编码）。
+
+那你怎么找出正在读的文件是用哪种编码写的呢？好吧，不幸的是，并没有一个十分简单的方式来检测编码。在不同的编码中，同样的字节可以表示不同，但同样有效的字符。因此，你必须依赖一个元数据（比如，在HTTP头信息里）来找出编码。越来越多的是，文件格式将编码定义成UTF-8。
+
+有了这些基础知识，我们来写一个程序，读取一个文件，检测它是否是JPG（提示：这些文件头部以字节FF D8开始），把对输入文件的描述写入一个文本文件。
+
+import io
+
+with open('photo.jpg', 'rb') as inf:
+    jpgdata = inf.read()
+
+if jpgdata.startswith(b'\xff\xd8'):
+    text = u'This is a JPEG file (%d bytes long)\n'
+else:
+    text = u'This is a random file (%d bytes long)\n'
+
+with io.open('summary.txt', 'w', encoding='utf-8') as outf:
+    outf.write(text % len(jpgdata))
+我敢肯定，现在你会正确地使用open啦！
+
+
+
+
+
+
+
+
+
+Python 3.2及以后版本
+
+我们来实现一个斐波那契计算器，并使用lru_cache。
+
+from functools import lru_cache
+
+@lru_cache(maxsize=32)
+def fib(n):
+    if n < 2:
+        return n
+    return fib(n-1) + fib(n-2)
+
+>>> print([fib(n) for n in range(10)])
+# Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+那个maxsize参数是告诉lru_cache，最多缓存最近多少个返回值。
+
+我们也可以轻松地对返回值清空缓存，通过这样：
+
+fib.cache_clear()
+
+
+
+
+
+
+上下文管理器
+
+基于类的实现
+
+一个上下文管理器的类，最起码要定义__enter__和__exit__方法。
+让我们来构造我们自己的开启文件的上下文管理器，并学习下基础知识。
+
+class File(object):
+    def __init__(self, file_name, method):
+        self.file_obj = open(file_name, method)
+    def __enter__(self):
+        return self.file_obj
+    def __exit__(self, type, value, traceback):
+        self.file_obj.close()
+通过定义__enter__和__exit__方法，我们可以在with语句里使用它。我们来试试：
+
+with File('demo.txt', 'w') as opened_file:
+    opened_file.write('Hola!')
+我们的__exit__函数接受三个参数。这些参数对于每个上下文管理器类中的__exit__方法都是必须的。我们来谈谈在底层都发生了什么。
+
+with语句先暂存了File类的__exit__方法
+然后它调用File类的__enter__方法
+__enter__方法打开文件并返回给with语句
+打开的文件句柄被传递给opened_file参数
+我们使用.write()来写文件
+with语句调用之前暂存的__exit__方法
+__exit__方法关闭了文件
+
+
+
+处理异常
+
+我们还没有谈到__exit__方法的这三个参数：type, value和traceback。
+在第4步和第6步之间，如果发生异常，Python会将异常的type,value和traceback传递给__exit__方法。
+它让__exit__方法来决定如何关闭文件以及是否需要其他步骤。在我们的案例中，我们并没有注意它们。
+
+那如果我们的文件对象抛出一个异常呢？万一我们尝试访问文件对象的一个不支持的方法。举个例子：
+
+with File('demo.txt', 'w') as opened_file:
+    opened_file.undefined_function('Hola!')
+我们来列一下，当异常发生时，with语句会采取哪些步骤。
+
+它把异常的type,value和traceback传递给__exit__方法
+它让__exit__方法来处理异常
+如果__exit__返回的是True，那么这个异常就被优雅地处理了。
+如果__exit__返回的是True以外的任何东西，那么这个异常将被with语句抛出。
+在我们的案例中，__exit__方法返回的是None(如果没有return语句那么方法会返回None)。因此，with语句抛出了那个异常。
+
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+AttributeError: 'file' object has no attribute 'undefined_function'
+我们尝试下在__exit__方法中处理异常：
+
+class File(object):
+    def __init__(self, file_name, method):
+        self.file_obj = open(file_name, method)
+    def __enter__(self):
+        return self.file_obj
+    def __exit__(self, type, value, traceback):
+        print("Exception has been handled")
+        self.file_obj.close()
+        return True
+
+with File('demo.txt', 'w') as opened_file:
+    opened_file.undefined_function()
+
+# Output: Exception has been handled
+我们的__exit__方法返回了True,因此没有异常会被with语句抛出。
+
+这还不是实现上下文管理器的唯一方式。还有一种方式，我们会在下一节中一起看看。
+
+
+
+基于生成器的实现
+
+我们还可以用装饰器(decorators)和生成器(generators)来实现上下文管理器。
+Python有个contextlib模块专门用于这个目的。我们可以使用一个生成器函数来实现一个上下文管理器，而不是使用一个类。
+让我们看看一个基本的，没用的例子：
+
+from contextlib import contextmanager
+
+@contextmanager
+def open_file(name):
+    f = open(name, 'w')
+    yield f
+    f.close()
+OK啦！这个实现方式看起来更加直观和简单。然而，这个方法需要关于生成器、yield和装饰器的一些知识。在这个例子中我们还没有捕捉可能产生的任何异常。它的工作方式和之前的方法大致相同。
+
+让我们小小地剖析下这个方法。
+
+Python解释器遇到了yield关键字。因为这个缘故它创建了一个生成器而不是一个普通的函数。
+因为这个装饰器，contextmanager会被调用并传入函数名（open_file）作为参数。
+contextmanager函数返回一个以GeneratorContextManager对象封装过的生成器。
+这个GeneratorContextManager被赋值给open_file函数，我们实际上是在调用GeneratorContextManager对象。
+那现在我们既然知道了所有这些，我们可以用这个新生成的上下文管理器了，像这样：
+
+with open_file('some_file') as f:
+    f.write('hola!')
+
+
+
+
